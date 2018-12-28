@@ -1,0 +1,5 @@
+class PrintingQueue
+	instance variables
+		private id: nat1;
+		private documents: seq of Document;
+end PrintingQueue

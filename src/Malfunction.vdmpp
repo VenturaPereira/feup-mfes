@@ -1,0 +1,6 @@
+class Malfunction
+	types
+		public String = seq of char;
+	instance variables
+		private description: String := "Unknown malfunction"
+end Malfunction
