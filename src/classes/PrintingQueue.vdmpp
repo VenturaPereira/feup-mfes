@@ -1,0 +1,8 @@
+class PrintingQueue
+	instance variables
+		private documents: seq of Document := [];
+	operations
+		-- Add a document to this printing queue.
+		public push_document: Document ==> ()
+		push_document(document) == documents := documents ^ [document];
+end PrintingQueue

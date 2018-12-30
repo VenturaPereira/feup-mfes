@@ -2,6 +2,5 @@ class Page
 	types
 		public String = seq of char;
 	instance variables
-		private number: nat1;
-		private content: seq of String;
+		private content: seq of String := [];
 end Page

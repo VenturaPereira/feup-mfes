@@ -1,0 +1,10 @@
+class Dimension
+	types
+		public Type = <A3>|<A4>|<A5>;
+	instance variables
+		private type: Type := <A4>;
+	operations
+		-- Dimension constructor.
+		public Dimension: Type ==> Dimension
+		Dimension(t) == (type := t; return self);
+end Dimension

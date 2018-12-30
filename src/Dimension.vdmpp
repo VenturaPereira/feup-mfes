@@ -1,6 +1,0 @@
-class Dimension
-	types
-		public String = seq of char;
-	instance variables
-		private value: String;
-end Dimension

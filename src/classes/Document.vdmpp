@@ -1,0 +1,13 @@
+class Document
+	types
+		public String = seq of char;
+	instance variables
+		private title: String := "Untitled document";
+		private dimension: Dimension := new Dimension();
+		private color: Color := new Color();
+		private pages: seq of Page := [];
+	operations
+		-- Document constructor.
+		public Document: String * Dimension * Color * seq of Page ==> Document
+		Document(t, d, c, p) == (title := t; dimension := d; color := c; pages := p; return self);
+end Document

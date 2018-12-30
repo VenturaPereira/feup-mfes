@@ -1,8 +1,0 @@
-class Service
-	instance variables
-		private employees: set of Employee;
-		private universities: set of University;
-	operations
-		public Service: () ==> Service
-		Service() == return self;
-end Service

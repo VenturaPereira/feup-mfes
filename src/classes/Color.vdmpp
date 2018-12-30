@@ -1,0 +1,10 @@
+class Color
+	types
+		public Type = <BW>|<Color>;
+	instance variables
+		private type: Type := <Color>;
+	operations
+		-- Color constructor.
+		public Color: Type ==> Color
+		Color(t) == (type := t; return self);
+end Color

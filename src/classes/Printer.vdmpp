@@ -1,0 +1,22 @@
+class Printer
+
+types
+	public String = seq of char;
+
+instance variables
+	private auth_student: [Student] := nil;
+	private queue: seq of Document := [];
+	private malfunctions: set of Malfunction := {};
+
+operations
+	-- Authenticate student. On this step a student should insert its credentials on the printer.
+	public auth: Student ==> ()
+	auth(student) == (auth_student := student; IO`print(auth_student.get_id() ^ " authenticated!"));
+		
+	-- Select student's documents from its personal printing queue.
+	public sel_student_docs: seq of nat ==> ()
+	sel_student_docs(idx) == (
+		for i in idx do IO`print(i);
+	);
+
+end Printer
