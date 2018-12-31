@@ -1,10 +1,18 @@
 class Color
-	types
-		public Type = <BW>|<Color>;
-	instance variables
-		private type: Type := <Color>;
-	operations
-		-- Color constructor.
-		public Color: Type ==> Color
-		Color(t) == (type := t; return self);
+
+types
+	public Type = <BW>|<COLOR>;
+
+instance variables
+	private type: Type := <COLOR>;
+
+operations
+	-- Color constructor.
+	public Color: Type ==> Color
+	Color(t) == (type := t; return self);
+	
+	-- Getter method for type.
+	public get_type: () ==> Type
+	get_type() == return self.type;
+
 end Color

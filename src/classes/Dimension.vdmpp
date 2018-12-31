@@ -1,10 +1,18 @@
 class Dimension
-	types
-		public Type = <A3>|<A4>|<A5>;
-	instance variables
-		private type: Type := <A4>;
-	operations
-		-- Dimension constructor.
-		public Dimension: Type ==> Dimension
-		Dimension(t) == (type := t; return self);
+
+types
+	public Type = <A3>|<A4>;
+
+instance variables
+	private type: Type := <A4>;
+
+operations
+	-- Dimension constructor.
+	public Dimension: Type ==> Dimension
+	Dimension(t) == (type := t; return self);
+	
+	-- Getter method for type.
+	public get_type: () ==> Type
+	get_type() == return self.type;
+	
 end Dimension

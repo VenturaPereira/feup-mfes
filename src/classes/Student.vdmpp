@@ -1,24 +1,32 @@
 class Student
-	types
-		public String = seq of char;
-	instance variables
-		private id: String := "000000000";
-		private balance: rat := 0;
-		private queue: PrintingQueue := new PrintingQueue();
-	operations
-		-- Add funds to the student's printing account.
-		public add_balance: rat ==> ()
-		add_balance(value) == balance := balance + value;
+
+types
+	public String = seq of char;
+
+instance variables
+	private id: String := "000000000";
+	private balance: rat := 0;
+	private queue: PrintingQueue := new PrintingQueue();
+
+operations
+	-- Add funds to the student's printing account.
+	public add_balance: rat ==> ()
+	add_balance(value) == balance := balance + value;
 		
-		-- Add a document to the student's own printing queue.
-		public add_document: Document ==> ()
-		add_document(document) == queue.push_document(document);
+	-- Add a document to the student's own printing queue.
+	public add_document: Document ==> ()
+	add_document(document) == queue.push_document(document);
+	
+	-- Getter method for printing queue.
+	public get_queue: () ==> PrintingQueue
+	get_queue() == return self.queue;
 		
-		-- Getter method for printing queue.
-		public get_queue: () ==> PrintingQueue
-		get_queue() == return self.queue;
-		
-		-- Getter method for name.
-		public get_id: () ==> String
-		get_id() == return self.id;
+	-- Getter method for name.
+	public get_id: () ==> String
+	get_id() == return self.id;
+	
+	-- Getter method for balance.
+	public get_balance: () ==> rat
+	get_balance() == return self.balance;
+
 end Student

@@ -1,5 +1,11 @@
 class Printer
 
+-- TODO: Possibly find a way to move this code to Service.vdmpp and make it a singleton.
+values
+	public BW_PAGE_PRICE: rat = 0.10;
+	public COLOR_PAGE_PRICE: rat = 0.25;
+	public DIM_MULT_PRICE: rat = 2;
+
 types
 	public String = seq of char;
 
@@ -13,10 +19,36 @@ operations
 	public auth: Student ==> ()
 	auth(student) == (auth_student := student; IO`print(auth_student.get_id() ^ " authenticated!"));
 		
-	-- Select student's documents from its personal printing queue.
+	-- TODO: Select student's documents from its personal printing queue.
 	public sel_student_docs: seq of nat ==> ()
 	sel_student_docs(idx) == (
 		for i in idx do IO`print(i);
+	);
+	
+	-- TODO: Start printing the student's queued documents.
+	public print: () ==> ()
+	print() == IO`print("Done!")
+	pre self.auth_student <> nil;
+	
+	-- NOT TESTED: Return the total cost for printing the entire queue.
+	public calc_print_cost: () ==> rat
+	calc_print_cost() == (
+		dcl op_cost: rat := 0.0;
+		
+		for doc in self.queue do (
+			dcl subtotal: rat := 0.0;
+			if doc.get_color().get_type() = <BW> then subtotal := subtotal + BW_PAGE_PRICE * doc.get_page_no()
+			else subtotal := subtotal + COLOR_PAGE_PRICE * doc.get_page_no();
+			if doc.get_dimension().get_type() = <A3> then subtotal := subtotal * DIM_MULT_PRICE;
+			op_cost := op_cost + subtotal;
+		);
+		return op_cost;
+	);
+	
+	-- TODO: Check whether the student has sufficient funds to print its desired documents.
+	public check_sufficient_funds: () ==> ()
+	check_sufficient_funds() == (
+		IO`print(calc_print_cost());
 	);
 
 end Printer

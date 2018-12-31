@@ -1,6 +1,9 @@
 class Malfunction
-	types
-		public String = seq of char;
-	instance variables
-		private description: String := "Unknown malfunction"
+
+types
+	public Issue = <NO_PAPER>|<NO_CMY>|<NO_BLK>|<UNKNOWN>;
+
+instance variables
+	private description: Issue := <UNKNOWN>;
+
 end Malfunction
