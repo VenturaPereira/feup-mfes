@@ -10,39 +10,61 @@ types
 	public String = seq of char;
 
 instance variables
+	private machine_id: String := "Unnamed printer";
 	private auth_student: [Student] := nil;
 	private queue: seq of Document := [];
 	private malfunctions: set of Malfunction := {};
+	
+	private STAT_PRINTED_DOCS: nat := 0;
+	private STAT_PRINTED_PAGES: nat := 0;
+	
+functions
+	--public sum_pages: seq of Document -> nat
+	--sum_pages(lst) == (def sol = 0; for doc in lst do sol := sol + doc.get_page_no(); return sol);
 
 operations
+	-- Printer constructor.
+	public Printer: String ==> Printer
+	Printer(id) == (machine_id := id; return self);
+	
 	-- Authenticate student. On this step a student should insert its credentials on the printer.
 	public auth: Student ==> ()
 	auth(student) == (auth_student := student; IO`print(auth_student.get_id() ^ " authenticated!"));
+	
+	-- Reset operation, unauthenticating the student and clearing the machine's printing queue.
+	public reset: () ==> ()
+	reset() == (auth_student := nil; queue := []);
 		
-	-- TODO: Select student's documents from its personal printing queue.
+	-- Select student's documents from its personal printing queue and add them to printer's queue.
 	public sel_student_docs: seq of nat ==> ()
-	sel_student_docs(idx) == (
-		for i in idx do IO`print(i);
+	sel_student_docs(idx) == for i in idx do (
+		if i <= len self.auth_student.get_queue().get_documents() 
+		then queue := queue ^ [self.auth_student.get_queue().get_documents()(i)];
 	);
 	
 	-- TODO: Start printing the student's queued documents.
 	public print: () ==> ()
-	print() == IO`print("Done!")
+	print() == (
+		STAT_PRINTED_DOCS := STAT_PRINTED_PAGES + len queue;	-- TODO: Probably attempt to use a lambda function here.
+		--STAT_PRINTED_PAGES := 
+		queue := [];
+		IO`print("Done!");
+	)
 	pre self.auth_student <> nil;
 	
-	-- NOT TESTED: Return the total cost for printing the entire queue.
+	-- Return the total cost for printing the entire queue.
 	public calc_print_cost: () ==> rat
 	calc_print_cost() == (
 		dcl op_cost: rat := 0.0;
 		
 		for doc in self.queue do (
 			dcl subtotal: rat := 0.0;
-			if doc.get_color().get_type() = <BW> then subtotal := subtotal + BW_PAGE_PRICE * doc.get_page_no()
+			if doc.get_color() = <BW> then subtotal := subtotal + BW_PAGE_PRICE * doc.get_page_no()
 			else subtotal := subtotal + COLOR_PAGE_PRICE * doc.get_page_no();
-			if doc.get_dimension().get_type() = <A3> then subtotal := subtotal * DIM_MULT_PRICE;
+			if doc.get_dimension() = <A3> then subtotal := subtotal * DIM_MULT_PRICE;
 			op_cost := op_cost + subtotal;
 		);
-		return op_cost;
+		return floor (op_cost * 100) / 100;  -- Round to two decimal places.
 	);
 	
 	-- TODO: Check whether the student has sufficient funds to print its desired documents.

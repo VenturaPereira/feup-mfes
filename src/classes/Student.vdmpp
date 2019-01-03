@@ -9,6 +9,10 @@ instance variables
 	private queue: PrintingQueue := new PrintingQueue();
 
 operations
+	-- Student constructor.
+	public Student: String ==> Student
+	Student(idd) == (id := idd; return self);
+
 	-- Add funds to the student's printing account.
 	public add_balance: rat ==> ()
 	add_balance(value) == balance := balance + value;

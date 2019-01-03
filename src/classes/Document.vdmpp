@@ -2,29 +2,34 @@ class Document
 
 types
 	public String = seq of char;
+	public Color = <BW>|<COLOR>;
+	public Dimension = <A3>|<A4>;
 
 instance variables
 	private title: String := "Untitled document";
-	private dimension: Dimension := new Dimension();
-	private color: Color := new Color();
-	private pages: seq of Page := [];
+	private page_no: nat := 0;
+	private color: Color := <COLOR>;
+	private dimension: Dimension := <A4>;
 
 operations
 	-- Document constructor.
-	public Document: String * Dimension * Color * seq of Page ==> Document
-	Document(t, d, c, p) == (title := t; dimension := d; color := c; pages := p; return self);
+	public Document: String * nat1 * Color * Dimension ==> Document
+	Document(t, pn, c, d) == (title := t; page_no := pn; color := c; dimension := d; return self);
 	
-	-- Getter method for dimension.
-	public get_dimension: () ==> Dimension
-	get_dimension() == return self.dimension;
+	-- Getter method for title.
+	public get_title: () ==> String
+	get_title() == return self.title;
+	
+	-- Getter method for number of pages.
+	public get_page_no: () ==> nat
+	get_page_no() == return self.page_no;
 	
 	-- Getter method for color.
 	public get_color: () ==> Color
 	get_color() == return self.color;
 	
-	-- Getter method for number of pages.
-	public get_page_no: () ==> nat
-	get_page_no() == return len self.pages;
-	
+	-- Getter method for dimension.
+	public get_dimension: () ==> Dimension
+	get_dimension() == return self.dimension;
 	
 end Document

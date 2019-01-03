@@ -6,5 +6,14 @@ types
 instance variables
 	private name: String := "Unnamed employee";
 	private assigned: set of Printer := {};
+	
+operations
+	-- Employee constructor.
+	public Employee: String ==> Employee
+	Employee(n) == (name := n; return self);
+	
+	-- Assign printer to this employee.
+	public assign: Printer ==> ()
+	assign(p) == assigned := assigned union {p};
 
 end Employee

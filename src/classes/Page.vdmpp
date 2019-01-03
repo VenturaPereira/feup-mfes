@@ -1,9 +1,0 @@
-class Page
-
-types
-	public String = seq of char;
-	
-instance variables
-	private content: seq of String := [];
-	
-end Page

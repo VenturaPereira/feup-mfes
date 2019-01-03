@@ -3,5 +3,10 @@ class Service
 instance variables
 	private employees: set of Employee := {};
 	private universities: set of University := {};
+	
+operations
+	-- Service constructor.
+	public Service: set of Employee * set of University ==> Service
+	Service(e, u) == (employees := e; universities := u; return self);
 
 end Service
