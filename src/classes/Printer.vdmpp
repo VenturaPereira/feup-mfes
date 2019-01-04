@@ -25,8 +25,8 @@ operations
 	-- Printer constructor.
 	public Printer: String ==> Printer
 	Printer(id) == (machine_id := id; return self)
-	pre elems "feup" inter elems id = elems "feup" or elems "flup" inter elems id = elems "flup"
-	or elems "icbas" inter elems id = elems "icbas"
+	pre elems "FEUP" inter elems id = elems "FEUP" or elems "FLUP" inter elems id = elems "FLUP"
+	or elems "ICBAS" inter elems id = elems "ICBAS"
 	post self.machine_id = id;
 	
 	-- Authenticate student. On this step a student should insert its credentials on the printer.
