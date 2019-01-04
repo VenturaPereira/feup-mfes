@@ -2,6 +2,9 @@ class Student
 
 types
 	public String = seq of char;
+	
+values
+	-- TODO Define values here
 
 instance variables
 	private id: String := "000000000";
@@ -11,26 +14,50 @@ instance variables
 operations
 	-- Student constructor.
 	public Student: String ==> Student
-	Student(idd) == (id := idd; return self);
+	Student(idd) == (id := idd; return self)
+	pre len id = 11		-- In a similar fashion to UP's numbering system.
+	post self.id = idd;
 
 	-- Add funds to the student's printing account.
 	public add_balance: rat ==> ()
-	add_balance(value) == balance := balance + value;
+	add_balance(value) == balance := balance + value
+	pre value <> 0
+	post balance = balance~ + value;
 		
 	-- Add a document to the student's own printing queue.
-	public add_document: Document ==> ()
-	add_document(document) == queue.push_document(document);
+	public push_document: Document ==> ()
+	push_document(document) == queue.push_document(document)
+	pre true
+	post document in set elems queue.get_documents();
 	
-	-- Getter method for printing queue.
-	public get_queue: () ==> PrintingQueue
-	get_queue() == return self.queue;
+	-- Delete document from the student's own printing queue.
+	public delete_document: Document ==> ()
+	delete_document(document) == queue.delete_document(document)
+	pre document in set elems queue.get_documents()
+	post true;
+	
+	-- Getter method for printing queue's documents.
+	public pure get_queue: () ==> seq of Document
+	get_queue() == return self.queue.get_documents()
+	pre true
+	post RESULT = self.queue.get_documents();
 		
 	-- Getter method for name.
-	public get_id: () ==> String
-	get_id() == return self.id;
+	public pure get_id: () ==> String
+	get_id() == return self.id
+	pre true
+	post RESULT = self.id;
 	
 	-- Getter method for balance.
-	public get_balance: () ==> rat
-	get_balance() == return self.balance;
+	public pure get_balance: () ==> rat
+	get_balance() == return self.balance
+	pre true
+	post RESULT = self.balance;
+	
+functions
+	-- TODO Define functiones here
+	
+traces
+	-- TODO Define Combinatorial Test Traces here
 
 end Student

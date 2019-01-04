@@ -2,6 +2,9 @@ class University
 
 types
 	public Uni = <FEUP>|<ICBAS>|<FLUP>;
+	
+values
+	-- TODO Define values here
 
 instance variables
 	private name: Uni := <FEUP>;
@@ -11,6 +14,20 @@ instance variables
 operations
 	-- University constructor.
 	public University: Uni * set of Student * set of Printer ==> University
-	University(n, s, p) == (name := n; students := s; printers := p; return self);
+	University(n, s, p) == (name := n; students := s; printers := p; return self)
+	pre s <> {} and p <> {}
+	post self.name = n and self.students = s and self.printers = p;
+	
+	-- Getter for name.
+	public pure get_name: () ==> Uni
+	get_name() == return self.name
+	pre true
+	post RESULT = self.name;
+	
+functions
+	-- TODO Define functiones here
+	
+traces
+	-- TODO Define Combinatorial Test Traces here
 
 end University

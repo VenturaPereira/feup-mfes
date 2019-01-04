@@ -53,7 +53,7 @@ public class StudentScreen {
         while (selection != 3) {
             this.clrsrc(); this.print_logo();
             System.out.println("[Login] > [Student Dashboard]\n");
-            System.out.println("1.\tUpload new document\n2.\tSee printing queue\n3.\tLogout");
+            System.out.println("1.\tUpload new document\n2.\tSee printing queue\n3.\tLogout\n> ");
             switch (selection = this.scanner.nextInt()) {
                 case 1: System.out.println("TODO: Document uploading goes here!"); break;
                 case 2: System.out.println("TODO: Printing queue goes here!"); break;

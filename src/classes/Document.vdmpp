@@ -4,6 +4,9 @@ types
 	public String = seq of char;
 	public Color = <BW>|<COLOR>;
 	public Dimension = <A3>|<A4>;
+	
+values
+	-- TODO Define values here
 
 instance variables
 	private title: String := "Untitled document";
@@ -14,22 +17,38 @@ instance variables
 operations
 	-- Document constructor.
 	public Document: String * nat1 * Color * Dimension ==> Document
-	Document(t, pn, c, d) == (title := t; page_no := pn; color := c; dimension := d; return self);
+	Document(t, pn, c, d) == (title := t; page_no := pn; color := c; dimension := d; return self)
+	pre len t <> 0 and pn > 0
+	post self.title = t and self.page_no = pn and self.color = c and self.dimension = d;
 	
 	-- Getter method for title.
-	public get_title: () ==> String
-	get_title() == return self.title;
+	public pure get_title: () ==> String
+	get_title() == return self.title
+	pre true
+	post RESULT = self.title;
 	
 	-- Getter method for number of pages.
-	public get_page_no: () ==> nat
-	get_page_no() == return self.page_no;
+	public pure get_page_no: () ==> nat
+	get_page_no() == return self.page_no
+	pre true
+	post RESULT = self.page_no;
 	
 	-- Getter method for color.
-	public get_color: () ==> Color
-	get_color() == return self.color;
+	public pure get_color: () ==> Color
+	get_color() == return self.color
+	pre true
+	post RESULT = self.color;
 	
 	-- Getter method for dimension.
-	public get_dimension: () ==> Dimension
-	get_dimension() == return self.dimension;
+	public pure get_dimension: () ==> Dimension
+	get_dimension() == return self.dimension
+	pre true
+	post RESULT = self.dimension;
+	
+functions
+	-- TODO Define functiones here
+	
+traces
+	-- TODO Define Combinatorial Test Traces here
 	
 end Document

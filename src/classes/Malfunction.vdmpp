@@ -2,8 +2,20 @@ class Malfunction
 
 types
 	public Issue = <NO_PAPER>|<NO_CMY>|<NO_BLK>|<UNKNOWN>;
+	
+values
+	-- TODO Define values here
 
 instance variables
 	private description: Issue := <UNKNOWN>;
+	
+operations
+	-- TODO Define operations here
+	
+functions
+	-- TODO Define functiones here
+	
+traces
+	-- TODO Define Combinatorial Test Traces here
 
 end Malfunction

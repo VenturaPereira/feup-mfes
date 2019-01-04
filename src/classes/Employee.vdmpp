@@ -2,6 +2,9 @@ class Employee
 
 types
 	public String = seq of char;
+		
+values
+	-- TODO Define values here
 
 instance variables
 	private name: String := "Unnamed employee";
@@ -10,10 +13,20 @@ instance variables
 operations
 	-- Employee constructor.
 	public Employee: String ==> Employee
-	Employee(n) == (name := n; return self);
+	Employee(n) == (name := n; return self)
+	pre len n <> 0
+	post self.name = n and assigned = {};
 	
 	-- Assign printer to this employee.
 	public assign: Printer ==> ()
-	assign(p) == assigned := assigned union {p};
+	assign(p) == assigned := assigned union {p}
+	pre self.name <> ""
+	post p in set self.assigned;
+	
+functions
+	-- TODO Define functiones here
+	
+traces
+	-- TODO Define Combinatorial Test Traces here
 
 end Employee
