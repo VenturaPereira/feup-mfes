@@ -1,0 +1,96 @@
+class PrinterTests is subclass of TestSuite
+
+types
+-- TODO Define types here
+
+values
+-- TODO Define values here
+
+instance variables
+	private printer1: Printer := new Printer("fe0000");
+	private printer2: Printer := new Printer("fe0001");
+	private printer3: Printer := new Printer("ic0000");
+	private printer4: Printer := new Printer("fl0000");
+	
+	private student1: Student := new Student("fe201503538");
+	private student2: Student := new Student("ic201793252");
+	
+	document1: Document := new Document("d1", 20, <BW>, <A4>);
+	document2: Document := new Document("d2", 40, <COLOR>, <A4>);
+	document3: Document := new Document("d3", 60, <COLOR>, <A3>);
+
+operations
+	-- Test #1: Tests student authentication and unauthentication on the printer.
+	private test_student_authentication: () ==> ()
+	test_student_authentication() == (
+		printer1.auth(student1);
+		assert_true(printer1.get_auth_student() = student1);
+		
+		printer1.auth(student2);
+		assert_true(printer1.get_auth_student().get_id() = student2.get_id());
+		
+		printer1.reset();
+		assert_true(printer1.get_auth_student() = nil);
+	);
+	
+	-- Test #2: Tests whether documents selected on a student's PQ are added to printer's PQ.
+	private test_queues_linking: () ==> ()
+	test_queues_linking() == (
+		printer1.auth(student1);
+		student1.push_document(document1);
+		student1.push_document(document2);
+		printer1.sel_student_docs([1]);
+		assert_true(printer1.get_queue() = [document1]);
+		
+		student1.push_document(document3);
+		printer1.sel_student_docs([3,1]);
+		assert_true(printer1.get_queue() = [document1, document3, document1]);
+		
+		printer1.auth(student2);
+		assert_true(printer1.get_queue() = []);
+		
+		student2.push_document(document1);
+		printer1.sel_student_docs([1]);
+		assert_true(printer1.get_queue() = [document1]); 
+		
+		printer1.reset();
+		assert_true(printer1.get_queue() = []);
+	);
+	
+	-- Test #3: Tests document printing from the printer's printing queue.
+	private test_printing: () ==> ()
+	test_printing() == (
+		printer2.auth(student1);
+		printer2.sel_student_docs([1]);
+		assert_true(printer2.get_queue() = [document1] and student1.get_queue() = [document1, document2, document3]);
+
+		printer2.auth(student2);
+		student2.push_document(document1);
+		student2.push_document(document3);
+		printer2.sel_student_docs([1,3]);
+		assert_true(printer2.calc_print_cost() = 32);
+		
+		student2.add_balance(10);
+		printer2.print();
+		assert_true(student2.get_balance() = 10);
+		
+		student2.add_balance(30);
+		printer2.print();
+		assert_true(student2.get_balance() + 32 = 40);
+	);
+	
+	public static main: () ==> ()
+	main() == (
+		dcl pt: PrinterTests := new PrinterTests();
+		pt.test_student_authentication();
+		pt.test_queues_linking();
+		pt.test_printing();
+	);
+
+functions
+-- TODO Define functiones here
+
+traces
+-- TODO Define Combinatorial Test Traces here
+
+end PrinterTests

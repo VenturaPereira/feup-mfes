@@ -1,0 +1,33 @@
+class EmployeeTests is subclass of TestSuite
+
+types
+-- TODO Define types here
+
+values
+-- TODO Define values here
+
+instance variables
+	employee1: Employee := new Employee("Miguel");
+	employee2: Employee := new Employee("Ventura");
+
+operations
+	-- Tests whether names are assigned accordingly.
+	private test_name_assignment: () ==> ()
+	test_name_assignment() == (
+		assert_true(employee1.get_name() = "Miguel");
+		assert_true(employee2.get_name() = "Ventura");
+	);
+	
+	public static main: () ==> ()
+	main() == (
+		dcl et: EmployeeTests := new EmployeeTests();
+		et.test_name_assignment();
+	)
+
+functions
+-- TODO Define functiones here
+
+traces
+-- TODO Define Combinatorial Test Traces here
+
+end EmployeeTests

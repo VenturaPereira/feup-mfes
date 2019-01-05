@@ -56,10 +56,10 @@ operations
 	-- Initialize employees.
 	public static init_employees: () ==> set of Employee
 	init_employees() == return {
-		new Employee("João Seixas"),
+		new Employee("Joao Seixas"),
 		new Employee("Ventura Pereira"),
 		new Employee("Diogo Dores"),
-		new Employee("João Conde"),
+		new Employee("Joao Conde"),
 		new Employee("Mariana Ribas")
 	};
 	

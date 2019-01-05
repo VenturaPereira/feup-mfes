@@ -1,0 +1,31 @@
+class TestSuite
+
+types
+-- TODO Define types here
+
+values
+-- TODO Define values here
+
+instance variables
+-- TODO Define instance variables here
+
+operations
+	protected assert_true: bool ==> ()
+	assert_true(b) == return 
+	pre b;
+	
+	-- Running the TestSuite runs every other test class that derives from it.
+	public static main: () ==> ()
+	main() == (
+		new StudentTests().main();
+		new PrinterTests().main();
+		IO`print("All tests ran successfully!");
+	);
+
+functions
+-- TODO Define functiones here
+
+traces
+-- TODO Define Combinatorial Test Traces here
+
+end TestSuite

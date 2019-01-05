@@ -25,7 +25,7 @@ operations
 		documents := new_queue;
 	)
 	pre dead_doc in set elems documents
-	post dead_doc not in set elems documents and len documents = len documents~ - 1;
+	post len documents = len documents~ - 1;
 	
 	-- Getter method for documents.
 	public pure get_documents: () ==> seq of Document

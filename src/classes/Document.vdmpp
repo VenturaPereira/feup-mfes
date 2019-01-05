@@ -19,7 +19,7 @@ operations
 	public Document: String * nat1 * Color * Dimension ==> Document
 	Document(t, pn, c, d) == (title := t; page_no := pn; color := c; dimension := d; return self)
 	pre len t <> 0 and pn > 0
-	post self.title = t and self.page_no = pn and self.color = c and self.dimension = d;
+	post self.title = t and self.page_no = pn and self.color = c and self.dimension = d and RESULT = self;
 	
 	-- Getter method for title.
 	public pure get_title: () ==> String

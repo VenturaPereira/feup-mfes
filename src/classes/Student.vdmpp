@@ -7,8 +7,8 @@ values
 	-- TODO Define values here
 
 instance variables
-	private id: String := "up000000000";
-	private balance: rat := 0;
+	private id: String := "xxxxxxxxxxx";
+	private balance: rat := 0.0;
 	private queue: PrintingQueue := new PrintingQueue();
 
 operations
@@ -16,7 +16,7 @@ operations
 	public Student: String ==> Student
 	Student(idd) == (id := idd; return self)
 	pre len id = 11		-- In a similar fashion to UP's numbering system.
-	post self.id = idd;
+	post self.id = idd and RESULT = self;
 
 	-- Add funds to the student's printing account.
 	public add_balance: rat ==> ()

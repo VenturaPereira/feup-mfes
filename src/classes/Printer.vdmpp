@@ -25,45 +25,42 @@ operations
 	-- Printer constructor.
 	public Printer: String ==> Printer
 	Printer(id) == (machine_id := id; return self)
-	pre elems "FEUP" inter elems id = elems "FEUP" or elems "FLUP" inter elems id = elems "FLUP"
-	or elems "ICBAS" inter elems id = elems "ICBAS"
-	post self.machine_id = id;
+	pre (elems "fe" inter elems id = elems "fe") or (elems "fl" inter elems id = elems "fl") or (elems "ic" inter elems id = elems "ic")
+	post self.machine_id = id and RESULT = self; 
 	
 	-- Authenticate student. On this step a student should insert its credentials on the printer.
 	public auth: Student ==> ()
-	auth(student) == (auth_student := student; IO`print(auth_student.get_id() ^ " authenticated!"))
-	pre true
-	post self.auth_student <> nil;
+	auth(student) == (auth_student := student; queue := [])
+	post self.auth_student <> nil and self.queue = [];
 	
 	-- Reset operation, unauthenticating the student and clearing the machine's printing queue.
 	public reset: () ==> ()
 	reset() == (auth_student := nil; queue := [])
-	pre auth_student = nil or queue = []
 	post auth_student = nil and queue = [];
 		
 	-- Select student's documents from its personal printing queue and add them to printer's queue.
 	public sel_student_docs: seq of nat ==> ()
-	sel_student_docs(idx) == for i in idx do (
-		if i <= len self.auth_student.get_queue()
+	sel_student_docs(idx) == for i in idx do
+		if i <= len self.auth_student.get_queue() and (i > 0)
 		then queue := queue ^ [self.auth_student.get_queue()(i)]
-	)
-	pre len idx <> 0
-	post len self.queue = len queue~ - len idx;
+	pre len idx <> 0 and (self.auth_student <> nil)
+	post len self.queue = len queue~ + len idx;
 	
-	-- TESTING NECESSARY: Start printing the student's queued documents.
+	-- Start printing the student's queued documents.
 	public print: () ==> ()
 	print() == (
+		if self.check_insufficient_funds() then return;
+		auth_student.add_balance(-self.calc_print_cost());
 		STAT_PRINTED_DOCS := STAT_PRINTED_PAGES + len queue;
 		for doc in self.queue do (
 			STAT_PRINTED_PAGES := STAT_PRINTED_PAGES + doc.get_page_no();
-			self.auth_student.delete_document(doc);
-			self.auth_student.add_balance(-self.calc_print_cost());
+			auth_student.delete_document(doc);
 			queue := tl queue;
 		);
 		IO`print("All documents printed!");
 	)
-	pre self.auth_student <> nil and len queue > 0 
-	post self.queue = [];
+	pre self.auth_student <> nil and len queue > 0
+	post true;
 	
 	-- Return the total cost for printing the entire queue.
 	public pure calc_print_cost: () ==> rat
@@ -79,14 +76,22 @@ operations
 		);
 		return floor (op_cost * 100) / 100;  -- Round to two decimal places.
 	)
-	pre true
 	post true;
 	
-	-- TESTING NECESSARY: Check whether the student has sufficient funds to print its desired documents.
-	public check_sufficient_funds: () ==> bool
-	check_sufficient_funds() == return calc_print_cost() <= self.auth_student.get_balance()
-	pre true
+	-- Check whether the student has sufficient funds to print its desired documents.
+	public check_insufficient_funds: () ==> bool
+	check_insufficient_funds() == return calc_print_cost() > self.auth_student.get_balance()
 	post true;
+	
+	-- Getter method for authenticated student.
+	public pure get_auth_student: () ==> [Student]
+	get_auth_student() == return self.auth_student
+	post RESULT = self.auth_student;
+	
+	-- Getter method for queue.
+	public pure get_queue: () ==> seq of Document
+	get_queue() == return self.queue
+	post RESULT = self.queue;
 	
 functions
 	-- TODO Define functiones here
