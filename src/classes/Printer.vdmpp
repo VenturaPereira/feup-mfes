@@ -67,7 +67,7 @@ operations
 			queue := tl queue;
 		);
 	)
-	pre self.auth_student <> nil and len (queue > 0)
+	pre self.auth_student <> nil and (len queue > 0)
 	post true;
 	
 	-- Return the total cost for printing the entire queue.
