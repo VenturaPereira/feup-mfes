@@ -1,6 +1,5 @@
 class Printer
 
--- TODO: Possibly find a way to move this code to Service.vdmpp and make it a singleton.
 values
 	public BW_PAGE_PRICE: rat = 0.10;
 	public COLOR_PAGE_PRICE: rat = 0.25;

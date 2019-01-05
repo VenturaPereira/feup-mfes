@@ -86,7 +86,6 @@ operations
 	get_university(uni) == (for all u in set universities do if u.get_name() = uni then return u; return new University())
 	post true;
 	
-
 functions
 	/** No functions implemented. */
 	

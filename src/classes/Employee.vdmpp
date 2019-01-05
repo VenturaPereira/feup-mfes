@@ -1,31 +1,36 @@
+/**
+ *	A worker for the printing service company whose main purpose is fixing printer malfunctions.
+ */
 class Employee
 
 types
+	/** Type definition for string. */
 	public String = seq of char;
 		
 values
-	-- TODO Define values here
+	/** No values implemented. */
 
 instance variables
+	/** The name of the employee. */
 	private name: String := "Unnamed employee";
 	
 operations
-	-- Employee constructor.
+	/** Employee constructor. */
 	public Employee: String ==> Employee
 	Employee(n) == (name := n; return self)
 	pre len n <> 0
 	post self.name = n and RESULT = self;
 	
-	-- Getter method for name.
+	/** Getter method for name. */
 	public pure get_name: () ==> String
 	get_name() == return self.name
 	pre true
 	post RESULT = self.name;
 	
 functions
-	-- TODO Define functiones here
+	/** No functions implemented. */
 	
 traces
-	-- TODO Define Combinatorial Test Traces here
+	/** No combinatorial test traces implemented. */
 
 end Employee

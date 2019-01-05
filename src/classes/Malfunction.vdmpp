@@ -1,38 +1,67 @@
+/**
+ *	A malfunction report with a specific printer.
+ *	Usually reported by a student operating with the machine.
+ */
 class Malfunction
 
 types
+	/**
+	 *	We defined 4 different common issues with printers:
+	 *	NO_PAPER: no paper, NO_CMY: at least one colored ink cartridge empty, 
+	 *	NO_BLK: black cartridge empty, UNKNOWN: other.
+	 */
 	public Issue = <NO_PAPER>|<NO_CMY>|<NO_BLK>|<UNKNOWN>;
+	
+	/** Type definition for string. */
 	public String = seq of char;
 	
 values
-	-- TODO Define values here
+	/** No values implemented. */
 
 instance variables
-	private description: Issue := <UNKNOWN>;
+	/** The specific issue of this malfunction report. */
+	private issue: Issue := <UNKNOWN>;
+	
+	/** The printer ID associated to this malfunction. */
 	private printer_id: String := "";
+	
+	/** Whether this malfunction was already solved or not by an employee. */
 	private solved: bool := false;
 	
 operations
-	-- Malfunction constructor.
+	/** The malfunction constructor. */
 	public Malfunction: Issue * String ==> Malfunction
-	Malfunction(i, s) == (description := i; printer_id := s; return self)
-	post description = i and printer_id = s and solved = false and RESULT = self;
+	Malfunction(i, s) == (issue := i; printer_id := s; return self)
+	post issue = i and printer_id = s and solved = false and RESULT = self;
 	
-	-- Fix malfunction.
+	/**
+	 *	Closes this malfunction by fixing the machine.
+	 *	After the service has assigned an employee to a malfunction, the employee fixes the machine.
+	 */
 	public fix: () ==> ()
 	fix() == (solved := true)
 	pre (solved = false)
 	post solved = true;
 	
-	-- Getter method for solved.
+	/** Getter method for issue. */
+	public pure get_issue: () ==> Issue
+	get_issue() == return (self.issue)
+	post RESULT = self.issue;
+	
+	/** Getter method for printer_id. */
+	public pure get_printer_id: () ==> String
+	get_printer_id() == return (self.printer_id)
+	post RESULT = self.printer_id;
+	
+	/** Getter method for solved. */
 	public pure get_solved: () ==> bool
 	get_solved() == return (self.solved)
 	post RESULT = self.solved;
 	
 functions
-	-- TODO Define functiones here
+	/** No functions implemented. */
 	
 traces
-	-- TODO Define Combinatorial Test Traces here
+	/** No combinatorial test traces implemented. */
 
 end Malfunction
