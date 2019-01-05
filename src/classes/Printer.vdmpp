@@ -5,28 +5,38 @@ values
 	public BW_PAGE_PRICE: rat = 0.10;
 	public COLOR_PAGE_PRICE: rat = 0.25;
 	public DIM_MULT_PRICE: rat = 2;
+	public UNI_CODE: map University to String = {<FEUP>|->"fe", <ICBAS>|->"ic", <FLUP>|->"fl"};
+	public NAT_2_CHAR: map nat to char = {0|->'0', 1|->'1', 2|->'2', 3|->'3', 4|->'4', 5|->'5', 6|->'6', 7|->'7', 8|->'8', 9|->'9'}
 
 types
 	public String = seq of char;
+	public University = <FEUP>|<ICBAS>|<FLUP>;
+	public Statistic = <STAT_DOCS_PRINTED>|<STAT_PAGES_PRINTED>;
 	
 values
 	-- TODO Define values here
 
 instance variables
-	private machine_id: String := "Unnamed printer";
+	private static uni_id: map University to nat := {<FEUP>|->0, <ICBAS>|->0, <FLUP>|->0};
+	private id: String := "Unnamed printer";
 	private auth_student: [Student] := nil;
 	private queue: seq of Document := [];
 	private malfunctions: set of Malfunction := {};
-	
-	private STAT_PRINTED_DOCS: nat := 0;
-	private STAT_PRINTED_PAGES: nat := 0;
+	private stats: map Statistic to nat := { |-> };
 
 operations
 	-- Printer constructor.
-	public Printer: String ==> Printer
-	Printer(id) == (machine_id := id; return self)
-	pre (elems "fe" inter elems id = elems "fe") or (elems "fl" inter elems id = elems "fl") or (elems "ic" inter elems id = elems "ic")
-	post self.machine_id = id and RESULT = self; 
+	public Printer: University ==> Printer
+	Printer(i) == (id := self.inc_uni_id(i); return self)
+	post self.assert_id_syntax(id) and RESULT = self;
+	
+	-- Increment university-scoped printer unique ID so that following printers have a incrementally larger ID.
+	public inc_uni_id: University ==> String
+	inc_uni_id(u) == (
+		dcl new_id: String := UNI_CODE(u) ^ "000" ^ [NAT_2_CHAR(uni_id(u))];
+		uni_id := uni_id ++ {u |-> uni_id(u) + 1};
+		return new_id;
+	);
 	
 	-- Authenticate student. On this step a student should insert its credentials on the printer.
 	public auth: Student ==> ()
@@ -51,13 +61,12 @@ operations
 	print() == (
 		if self.check_insufficient_funds() then return;
 		auth_student.add_balance(-self.calc_print_cost());
-		STAT_PRINTED_DOCS := STAT_PRINTED_PAGES + len queue;
+		self.record_statistic(<STAT_DOCS_PRINTED>, len queue);
 		for doc in self.queue do (
-			STAT_PRINTED_PAGES := STAT_PRINTED_PAGES + doc.get_page_no();
+			self.record_statistic(<STAT_PAGES_PRINTED>, doc.get_page_no());
 			auth_student.delete_document(doc);
 			queue := tl queue;
 		);
-		IO`print("All documents printed!");
 	)
 	pre self.auth_student <> nil and len queue > 0
 	post true;
@@ -83,6 +92,18 @@ operations
 	check_insufficient_funds() == return calc_print_cost() > self.auth_student.get_balance()
 	post true;
 	
+	-- Record printer statistic.
+	public record_statistic: Statistic * nat ==> ()
+	record_statistic(s, v) ==
+		if s not in set dom stats then stats := stats ++ {s |-> v}
+		else stats := stats ++ {s |-> stats(s) + v}
+	post assert_statistics(s, v, stats, stats~);
+	
+	-- Getter method for ID.
+	public pure get_id: () ==> String
+	get_id() == return self.id
+	post RESULT = self.id;
+	
 	-- Getter method for authenticated student.
 	public pure get_auth_student: () ==> [Student]
 	get_auth_student() == return self.auth_student
@@ -93,8 +114,29 @@ operations
 	get_queue() == return self.queue
 	post RESULT = self.queue;
 	
+	-- Getter method for a specific statistic.
+	public pure get_statistic: Statistic ==> nat
+	get_statistic(s) == return self.stats(s)
+	post RESULT = self.stats(s);
+	
 functions
-	-- TODO Define functiones here
+	-- Assert the full syntax of the printer's ID. 
+	-- The printer's ID follows <uni_code>{2}<num>{4} (e.g. fe0001).
+	public assert_id_syntax: String -> bool
+	assert_id_syntax(id) == (
+		(has_substring("fe", id) or has_substring("fl", id) or has_substring("ic", id)) and len id = 6
+	);
+	
+	-- Check whether a string is contained in another string.
+	public has_substring: String * String -> bool
+	has_substring(s1, s2) == elems s1 inter elems s2 = elems s1;
+	
+	-- Assert the addition of statistics.
+	public assert_statistics: Statistic * nat * map Statistic to nat * map Statistic to nat -> bool
+	assert_statistics(s, v, new_s, old_s) == (
+		if s not in set dom old_s then (new_s(s) = v)
+		else (new_s = old_s ++ {s |-> old_s(s) + v})
+	);
 
 traces
 	-- TODO Define Combinatorial Test Traces here

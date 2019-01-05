@@ -10,6 +10,7 @@ instance variables
 	private id: String := "xxxxxxxxxxx";
 	private balance: rat := 0.0;
 	private queue: PrintingQueue := new PrintingQueue();
+	inv balance >= 0.0;
 
 operations
 	-- Student constructor.

@@ -10,9 +10,10 @@ values
 
 instance variables
 	private title: String := "Untitled document";
-	private page_no: nat := 0;
+	private page_no: nat := 1;
 	private color: Color := <COLOR>;
 	private dimension: Dimension := <A4>;
+	inv page_no >= 1;
 
 operations
 	-- Document constructor.

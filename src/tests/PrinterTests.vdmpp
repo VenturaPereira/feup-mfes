@@ -7,11 +7,6 @@ values
 -- TODO Define values here
 
 instance variables
-	private printer1: Printer := new Printer("fe0000");
-	private printer2: Printer := new Printer("fe0001");
-	private printer3: Printer := new Printer("ic0000");
-	private printer4: Printer := new Printer("fl0000");
-	
 	private student1: Student := new Student("fe201503538");
 	private student2: Student := new Student("ic201793252");
 	
@@ -20,9 +15,26 @@ instance variables
 	document3: Document := new Document("d3", 60, <COLOR>, <A3>);
 
 operations
-	-- Test #1: Tests student authentication and unauthentication on the printer.
+	-- Test #1: Tests whether the printer's ID correctly increments relative to the university registered.
+	private test_printer_id: () ==> ()
+	test_printer_id() == (
+		dcl printer1: Printer := new Printer(<FEUP>);
+		dcl printer2: Printer := new Printer(<FEUP>);
+		dcl printer3: Printer := new Printer(<ICBAS>);
+		dcl printer4: Printer := new Printer(<FLUP>);
+		dcl printer5: Printer := new Printer(<FEUP>);
+		
+		assert_true(printer1.get_id() = "fe0000");
+		assert_true(printer2.get_id() = "fe0001");
+		assert_true(printer3.get_id() = "ic0000");
+		assert_true(printer4.get_id() = "fl0000");
+		assert_true(printer5.get_id() = "fe0002");
+	);
+	
+	-- Test #2: Tests student authentication and unauthentication on the printer.
 	private test_student_authentication: () ==> ()
 	test_student_authentication() == (
+		dcl printer1: Printer := new Printer(<FEUP>);
 		printer1.auth(student1);
 		assert_true(printer1.get_auth_student() = student1);
 		
@@ -33,9 +45,11 @@ operations
 		assert_true(printer1.get_auth_student() = nil);
 	);
 	
-	-- Test #2: Tests whether documents selected on a student's PQ are added to printer's PQ.
+	
+	-- Test #3: Tests whether documents selected on a student's PQ are added to printer's PQ.
 	private test_queues_linking: () ==> ()
 	test_queues_linking() == (
+		dcl printer1: Printer := new Printer(<FEUP>);
 		printer1.auth(student1);
 		student1.push_document(document1);
 		student1.push_document(document2);
@@ -57,9 +71,10 @@ operations
 		assert_true(printer1.get_queue() = []);
 	);
 	
-	-- Test #3: Tests document printing from the printer's printing queue.
+	-- Test #4: Tests document printing from the printer's printing queue.
 	private test_printing: () ==> ()
 	test_printing() == (
+		dcl printer2: Printer := new Printer(<FEUP>);
 		printer2.auth(student1);
 		printer2.sel_student_docs([1]);
 		assert_true(printer2.get_queue() = [document1] and student1.get_queue() = [document1, document2, document3]);
@@ -82,6 +97,7 @@ operations
 	public static main: () ==> ()
 	main() == (
 		dcl pt: PrinterTests := new PrinterTests();
+		pt.test_printer_id();
 		pt.test_student_authentication();
 		pt.test_queues_linking();
 		pt.test_printing();

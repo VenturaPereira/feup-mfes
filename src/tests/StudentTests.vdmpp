@@ -24,9 +24,6 @@ operations
 		
 		student1.add_balance(-3.25);
 		assert_true(student1.get_balance() = 1.00);
-		
-		student2.add_balance(-1.25);
-		assert_true(student2.get_balance() = -1.25);
 	);
 	
 	-- Test #2: Tests adding and removing documents from the student's printing queue.
