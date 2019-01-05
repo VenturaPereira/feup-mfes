@@ -8,20 +8,13 @@ values
 
 instance variables
 	private name: String := "Unnamed employee";
-	private assigned: set of Printer := {};
 	
 operations
 	-- Employee constructor.
 	public Employee: String ==> Employee
 	Employee(n) == (name := n; return self)
 	pre len n <> 0
-	post self.name = n and assigned = {} and RESULT = self;
-	
-	-- Assign printer to this employee.
-	public assign: Printer ==> ()
-	assign(p) == assigned := assigned union {p}
-	pre self.name <> ""
-	post p in set self.assigned;
+	post self.name = n and RESULT = self;
 	
 	-- Getter method for name.
 	public pure get_name: () ==> String

@@ -17,8 +17,11 @@ operations
 	-- Running the TestSuite runs every other test class that derives from it.
 	public static main: () ==> ()
 	main() == (
+		new EmployeeTests().main();
 		new StudentTests().main();
 		new PrinterTests().main();
+		new MalfunctionTests().main();
+		
 		IO`print("All tests ran successfully!");
 	);
 

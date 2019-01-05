@@ -29,6 +29,8 @@ operations
 		assert_true(printer3.get_id() = "ic0000");
 		assert_true(printer4.get_id() = "fl0000");
 		assert_true(printer5.get_id() = "fe0002");
+		
+		assert_true(document1.get_title() = "d1");
 	);
 	
 	-- Test #2: Tests student authentication and unauthentication on the printer.

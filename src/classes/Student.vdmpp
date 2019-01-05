@@ -37,6 +37,11 @@ operations
 	pre document in set elems queue.get_documents()
 	post true;
 	
+	-- Report printer malfunction.
+	public report_malfunction: Service * Malfunction ==> ()
+	report_malfunction(s, m) == s.push_issue(m)
+	post true;
+	
 	-- Getter method for printing queue's documents.
 	public pure get_queue: () ==> seq of Document
 	get_queue() == return self.queue.get_documents()

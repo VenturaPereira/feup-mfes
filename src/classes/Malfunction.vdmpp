@@ -2,15 +2,32 @@ class Malfunction
 
 types
 	public Issue = <NO_PAPER>|<NO_CMY>|<NO_BLK>|<UNKNOWN>;
+	public String = seq of char;
 	
 values
 	-- TODO Define values here
 
 instance variables
 	private description: Issue := <UNKNOWN>;
+	private printer_id: String := "";
+	private solved: bool := false;
 	
 operations
-	-- TODO Define operations here
+	-- Malfunction constructor.
+	public Malfunction: Issue * String ==> Malfunction
+	Malfunction(i, s) == (description := i; printer_id := s; return self)
+	post description = i and printer_id = s and solved = false and RESULT = self;
+	
+	-- Fix malfunction.
+	public fix: () ==> ()
+	fix() == (solved := true)
+	pre (solved = false)
+	post solved = true;
+	
+	-- Getter method for solved.
+	public pure get_solved: () ==> bool
+	get_solved() == return (self.solved)
+	post RESULT = self.solved;
 	
 functions
 	-- TODO Define functiones here

@@ -21,7 +21,6 @@ instance variables
 	private id: String := "Unnamed printer";
 	private auth_student: [Student] := nil;
 	private queue: seq of Document := [];
-	private malfunctions: set of Malfunction := {};
 	private stats: map Statistic to nat := { |-> };
 
 operations
@@ -32,8 +31,8 @@ operations
 	
 	-- Increment university-scoped printer unique ID so that following printers have a incrementally larger ID.
 	public inc_uni_id: University ==> String
-	inc_uni_id(u) == (
-		dcl new_id: String := UNI_CODE(u) ^ "000" ^ [NAT_2_CHAR(uni_id(u))];
+	inc_uni_id(u) == 
+		(dcl new_id: String := UNI_CODE(u) ^ "000" ^ [NAT_2_CHAR(uni_id(u))];
 		uni_id := uni_id ++ {u |-> uni_id(u) + 1};
 		return new_id;
 	);
@@ -58,17 +57,17 @@ operations
 	
 	-- Start printing the student's queued documents.
 	public print: () ==> ()
-	print() == (
-		if self.check_insufficient_funds() then return;
+	print() ==
+		(if self.check_insufficient_funds() then return;
 		auth_student.add_balance(-self.calc_print_cost());
-		self.record_statistic(<STAT_DOCS_PRINTED>, len queue);
-		for doc in self.queue do (
-			self.record_statistic(<STAT_PAGES_PRINTED>, doc.get_page_no());
+		record_statistic(<STAT_DOCS_PRINTED>, len queue);
+		for doc in self.queue do
+			(record_statistic(<STAT_PAGES_PRINTED>, doc.get_page_no());
 			auth_student.delete_document(doc);
 			queue := tl queue;
 		);
 	)
-	pre self.auth_student <> nil and len queue > 0
+	pre self.auth_student <> nil and len (queue > 0)
 	post true;
 	
 	-- Return the total cost for printing the entire queue.
@@ -76,8 +75,8 @@ operations
 	calc_print_cost() == (
 		dcl op_cost: rat := 0.0;
 		
-		for doc in self.queue do (
-			dcl subtotal: rat := 0.0;
+		for doc in self.queue do
+			(dcl subtotal: rat := 0.0;
 			if doc.get_color() = <BW> then subtotal := subtotal + BW_PAGE_PRICE * doc.get_page_no()
 			else subtotal := subtotal + COLOR_PAGE_PRICE * doc.get_page_no();
 			if doc.get_dimension() = <A3> then subtotal := subtotal * DIM_MULT_PRICE;
@@ -111,7 +110,7 @@ operations
 	
 	-- Getter method for queue.
 	public pure get_queue: () ==> seq of Document
-	get_queue() == return self.queue
+	get_queue() == return (self.queue)
 	post RESULT = self.queue;
 	
 	-- Getter method for a specific statistic.
@@ -124,7 +123,7 @@ functions
 	-- The printer's ID follows <uni_code>{2}<num>{4} (e.g. fe0001).
 	public assert_id_syntax: String -> bool
 	assert_id_syntax(id) == (
-		(has_substring("fe", id) or has_substring("fl", id) or has_substring("ic", id)) and len id = 6
+		(has_substring("fe", id) or has_substring("fl", id) or has_substring("ic", id)) and (len id = 6)
 	);
 	
 	-- Check whether a string is contained in another string.

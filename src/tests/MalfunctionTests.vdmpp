@@ -1,0 +1,76 @@
+class MalfunctionTests is subclass of TestSuite
+
+types
+-- TODO Define types here
+
+values
+-- TODO Define values here
+
+instance variables
+	service1: Service := new Service();
+	employee1: Employee := new Employee("A");
+	employee2: Employee := new Employee("B");
+	employee3: Employee := new Employee("C");
+	student1: Student := new Student("fe201503538");
+	printer1: Printer := new Printer(<FEUP>);
+	printer2: Printer := new Printer(<FEUP>);
+
+operations
+	private test_employee_addition: () ==> ()
+	test_employee_addition() == (
+		service1.add_employee(employee1);
+		service1.add_employee(employee2);
+		assert_true(service1.get_assigned() = {employee1 |-> nil, employee2 |-> nil});
+		
+		service1.add_employee(employee3);
+		assert_true(service1.get_assigned() = {employee1 |-> nil, employee2 |-> nil, employee3 |-> nil});
+		
+		service1.remove_employee(employee2);
+		assert_true(service1.get_assigned() = {employee1 |-> nil, employee3 |-> nil});
+		assert_true(service1.get_employees() = {employee1, employee3});
+	);
+
+	-- Test #2: Tests whether reported malfunction is assigned to employee.
+	private test_malfunction_assignment: () ==> ()
+	test_malfunction_assignment() == (
+		dcl malfunction1: Malfunction := new Malfunction(<NO_PAPER>, printer1.get_id());
+		dcl malfunction2: Malfunction := new Malfunction(<NO_BLK>, printer1.get_id());
+		dcl malfunction3: Malfunction := new Malfunction(<NO_CMY>, printer2.get_id());
+		student1.report_malfunction(service1, malfunction1);
+		assert_true(service1.get_assigned() = {employee1 |-> malfunction1, employee3 |-> nil});
+		
+		service1.fix_all_issues();
+		assert_true(service1.get_assigned() = {employee1 |-> nil, employee3 |-> nil});
+		
+		student1.report_malfunction(service1, malfunction2);
+		service1.add_employee(employee2);
+		student1.report_malfunction(service1, malfunction3);
+		assert_true(service1.get_assigned() = {employee1 |-> malfunction2, employee3 |-> nil, employee2 |-> malfunction3});
+	);
+	
+	-- Test #3: Tests whether fixing an issue closes the malfunction as solved.
+	private test_malfunction_solved: () ==> ()
+	test_malfunction_solved() == (
+		dcl malfunction4: Malfunction := new Malfunction(<NO_PAPER>, printer1.get_id());
+		student1.report_malfunction(service1, malfunction4);
+		assert_true(malfunction4.get_solved() = false);
+		
+		service1.fix_all_issues();
+		assert_true(malfunction4.get_solved() = true);
+	);
+	
+	public static main: () ==> ()
+	main() == (
+		dcl mt: MalfunctionTests := new MalfunctionTests();
+		mt.test_employee_addition();
+		mt.test_malfunction_assignment();
+		mt.test_malfunction_solved();
+	);
+
+functions
+-- TODO Define functiones here
+
+traces
+-- TODO Define Combinatorial Test Traces here
+
+end MalfunctionTests

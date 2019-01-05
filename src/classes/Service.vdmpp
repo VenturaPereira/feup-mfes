@@ -9,19 +9,53 @@ values
 instance variables
 	private employees: set of Employee := {};
 	private universities: set of University := {};
+	private assigned: map Employee to [Malfunction] := {|->};
 	
 operations
-	-- Service constructor.
-	public Service: set of Employee * set of University ==> Service
-	Service(e, u) == (employees := e; universities := u; return self)
-	pre e <> {} and u <> {} 
-	post self.employees = e and self.universities = u and RESULT = self;
+	-- Add employee.
+	public add_employee: Employee ==> ()
+	add_employee(e) == (employees := employees union {e}; assigned := assigned ++ {e |-> nil};)
+	pre e not in set employees and e not in set dom assigned
+	post e in set employees and e in set dom assigned;
+	
+	-- Remove employee.
+	public remove_employee: Employee ==> ()
+	remove_employee(e) == (employees := employees \ {e}; assigned := {e} <-: assigned;)
+	pre e in set employees and e in set dom assigned
+	post e not in set employees and e not in set dom assigned;
+	
+	-- Log new malfunction and assign employee to it.
+	public push_issue: Malfunction ==> ()
+	push_issue(m) == (
+		dcl logged: bool := false;
+		for all emp in set dom assigned do 
+		if assigned(emp) = nil and not logged then (assigned := assigned ++ {emp |-> m}; logged := true);
+	)
+	pre m not in set rng assigned
+	post true;
+	
+	-- Send employees to fix all malfunction.
+	public fix_all_issues: () ==> ()
+	fix_all_issues() == (
+		for all emp in set dom assigned do
+		if assigned(emp) <> nil then (assigned(emp).fix(); assigned := assigned ++ {emp |-> nil});
+	);
+	
+	-- Getter for assigned.
+	public pure get_assigned: () ==> map Employee to [Malfunction]
+	get_assigned() == return self.assigned
+	post RESULT = self.assigned;
+	
+	-- Getter for employees.
+	public pure get_employees: () ==> set of Employee
+	get_employees() == return self.employees
+	post RESULT = self.employees;
 	
 	-- Select specific University.
 	public pure get_university: Uni ==> University
 	get_university(uni) == (for all u in set universities do if u.get_name() = uni then return u; return new University())
-	pre true
 	post true;
+	
 
 functions
 	-- TODO Define functiones here
