@@ -1,22 +1,27 @@
 class PrintingQueue
 
 types
-	-- TODO Define types here
+	/** No types implemented. */
 
 values
-	-- TODO Define values here
+	/** No values implemented. */
 
 instance variables
+	/** A sequence of documents inside this printing queue. */
 	private documents: seq of Document := [];
 
 operations
-	-- Add a document to the top of this printing queue.
+	/**
+	 *	Add a document to the bottom of this printing queue.
+	 */
 	public push_document: Document ==> ()
 	push_document(document) == documents := documents ^ [document]
 	pre true
 	post document in set elems documents and len documents = len documents~ + 1;
 	
-	-- Delete a document from this printing queue.
+	/**
+	 *	Delete a document from this printing queue.
+	 */
 	public delete_document: Document ==> ()
 	delete_document(dead_doc) == (
 		dcl new_queue: seq of Document := [], popped: bool := false;
@@ -27,16 +32,16 @@ operations
 	pre dead_doc in set elems documents
 	post len documents = len documents~ - 1;
 	
-	-- Getter method for documents.
+	/** Getter method for documents. */
 	public pure get_documents: () ==> seq of Document
 	get_documents() == return self.documents
 	pre true
 	post RESULT = self.documents;
 	
 functions
-	-- TODO Define functiones here
+	/** No functions implemented. */
 	
 traces
-	-- TODO Define Combinatorial Test Traces here
+	/** No combinatorial test traces implemented. */
 
 end PrintingQueue
