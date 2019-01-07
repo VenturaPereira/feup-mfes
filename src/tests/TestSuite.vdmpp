@@ -21,8 +21,6 @@ operations
 		new StudentTests().main();
 		new PrinterTests().main();
 		new MalfunctionTests().main();
-		
-		IO`print("All tests ran successfully!");
 	);
 
 functions

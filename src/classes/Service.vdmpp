@@ -81,11 +81,6 @@ operations
 	get_assigned() == return self.assigned
 	post RESULT = self.assigned;
 	
-	/** Getter method for a university object provided its code. */
-	public pure get_university: Uni ==> University
-	get_university(uni) == (for all u in set universities do if u.get_name() = uni then return u; return new University())
-	post true;
-	
 functions
 	/** No functions implemented. */
 	

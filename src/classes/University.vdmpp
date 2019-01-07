@@ -30,8 +30,7 @@ operations
 	/** Getter method for name. */
 	public pure get_name: () ==> Uni
 	get_name() == return self.name
-	pre true
-	post RESULT = self.name;
+	post RESULT = (self.name);
 	
 functions
 	/** No functions implemented. */

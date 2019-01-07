@@ -128,8 +128,8 @@ operations
 	 *	The result is rounded to two decimal places.
 	 */
 	public pure calc_print_cost: () ==> rat
-	calc_print_cost() == (
-		dcl op_cost: rat := 0.0;
+	calc_print_cost() ==
+		(dcl op_cost: rat := 0.0;
 		
 		for doc in self.queue do
 			(dcl subtotal: rat := 0.0;
@@ -162,12 +162,12 @@ operations
 	
 	/** Getter method for ID. */
 	public pure get_id: () ==> String
-	get_id() == return self.id
+	get_id() == return (self.id)
 	post RESULT = self.id;
 	
 	/** Getter method for authenticated student. */
 	public pure get_auth_student: () ==> [Student]
-	get_auth_student() == return self.auth_student
+	get_auth_student() == return (self.auth_student)
 	post RESULT = self.auth_student;
 	
 	/** Getter method for queue. */

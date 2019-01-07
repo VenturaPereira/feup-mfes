@@ -14,6 +14,8 @@ operations
 	-- Tests whether names are assigned accordingly.
 	private test_name_assignment: () ==> ()
 	test_name_assignment() == (
+		dcl university1: University := new University(<FEUP>, {new Student()}, {new Printer()});
+		assert_true(university1.get_name() = <FEUP>);
 		assert_true(employee1.get_name() = "Miguel");
 		assert_true(employee2.get_name() = "Ventura");
 	);

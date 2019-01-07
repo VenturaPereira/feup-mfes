@@ -93,6 +93,7 @@ operations
 		
 		student2.add_balance(30);
 		printer2.print();
+		assert_true(printer2.get_statistic(<STAT_DOCS_PRINTED>) = 2);
 		assert_true(student2.get_balance() + 32 = 40);
 	);
 	

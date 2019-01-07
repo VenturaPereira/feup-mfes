@@ -59,12 +59,21 @@ operations
 		assert_true(malfunction4.get_solved() = true);
 	);
 	
+	-- Test #4: Test malfunction variable extraction.
+	private test_malfunction_getters: () ==> ()
+	test_malfunction_getters() == (
+		dcl malfunction5: Malfunction := new Malfunction(<NO_BLK>, printer1.get_id());
+		assert_true(malfunction5.get_issue() = <NO_BLK>);
+		assert_true(malfunction5.get_printer_id() = printer1.get_id());
+	);
+	
 	public static main: () ==> ()
 	main() == (
 		dcl mt: MalfunctionTests := new MalfunctionTests();
 		mt.test_employee_addition();
 		mt.test_malfunction_assignment();
 		mt.test_malfunction_solved();
+		mt.test_malfunction_getters();
 	);
 
 functions
