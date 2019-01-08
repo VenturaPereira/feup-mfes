@@ -108,7 +108,7 @@ operations
 	 */
 	public print: () ==> ()
 	print() ==
-		(if self.check_insufficient_funds() then return;
+		(if self.check_insufficient_funds() then (IO`print("Insufficient funds!"); return);
 		auth_student.add_balance(-self.calc_print_cost());
 		record_statistic(<STAT_DOCS_PRINTED>, len queue);
 		for doc in self.queue do
