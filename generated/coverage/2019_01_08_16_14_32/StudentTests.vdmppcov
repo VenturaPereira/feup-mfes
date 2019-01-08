@@ -1,0 +1,68 @@
+class StudentTests is subclass of TestSuite
+
+types
+-- TODO Define types here
+
+values
+-- TODO Define values here
+
+instance variables
+	student1: Student := new Student("fe201503538");
+	student2: Student := new Student("fl201407644");
+	student3: Student := new Student("ic201793252");
+	
+	document1: Document := new Document("d1", 20, <BW>, <A4>);
+	document2: Document := new Document("d2", 40, <COLOR>, <A3>);
+	document3: Document := new Document("d3", 60, <COLOR>, <A4>);
+
+operations	
+	-- Test #1: Tests adding or subtracting money from the student's balance.
+	private test_balance_mod: () ==> ()
+	test_balance_mod() == (
+		student1.add_balance(4.25);
+		assert_true(student1.get_balance() = 4.25);
+		
+		student1.add_balance(-3.25);
+		assert_true(student1.get_balance() = 1.00);
+	);
+	
+	-- Test #2: Tests adding and removing documents from the student's printing queue.
+	private test_printing_queue: () ==> ()
+	test_printing_queue() == (
+		student1.push_document(document1);
+		assert_true(student1.get_queue() = [document1]);
+		
+		student1.push_document(document1); 
+		student1.push_document(document2);
+		assert_true(student1.get_queue() = [document1, document1, document2]);
+		
+		student1.delete_document(document1);
+		assert_true(student1.get_queue() = [document1, document2]);
+		
+		student1.delete_document(document2); 
+		student1.push_document(document1);
+		assert_true(student1.get_queue() = [document1, document1]);
+	);
+	
+	-- Test #3: Tests correct retrieval of personal ID.
+	private test_id_retrieval: () ==> ()
+	test_id_retrieval() == (
+		assert_true(student1.get_id() = "fe201503538");
+		assert_true(student3.get_id() = "ic201793252");
+	);
+	
+	public static main: () ==> ()
+	main() == (
+		dcl stt: StudentTests := new StudentTests();
+		stt.test_balance_mod();
+		stt.test_printing_queue();
+		stt.test_id_retrieval();
+	)
+
+functions
+-- TODO Define functiones here
+
+traces
+-- TODO Define Combinatorial Test Traces here
+
+end StudentTests

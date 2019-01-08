@@ -1,0 +1,90 @@
+/**
+ *	The printing service's root class.
+ *	Represents the company behind the distributed printing service.
+ *	This class should technically only be instantiated once during the execution of the software.
+ */
+class Service
+
+types
+	/** Currently, only the following 3 universities were made clients of this company. */
+	public Uni = <FEUP>|<ICBAS>|<FLUP>;
+	
+values
+	/** No values implemented. */
+	
+instance variables
+	/** A set of employees working for the company whose sole purpose is fixing printer malfunctions. */
+	private employees: set of Employee := {};
+	
+	/** A set of clients for the company (in our abstraction, they're called universities. */
+	private universities: set of University := {};
+	
+	/** A map which assigns employees to printer malfunctions. */
+	private assigned: map Employee to [Malfunction] := {|->};
+	
+operations
+	/** 
+	 *	Adds an employee.
+	 *	Performing this action not only pushes it to the company's employee set but also creates a new 
+	 *	key on the assigned map for the employee which points to nil. 
+	 *	This indicates said employee still hasn't been made in charge of fixing a malfunction just yet.
+	 */
+	public add_employee: Employee ==> ()
+	add_employee(e) == (employees := employees union {e}; assigned := assigned ++ {e |-> nil};)
+	pre e not in set employees and e not in set dom assigned
+	post e in set employees and e in set dom assigned;
+	
+	/**
+	 *	Removes an employee.
+	 *	Conversingly to adding an employee, this action removes given employee from the company's employee
+	 *	set and unmaps prior assignments of the employee to a malfunction.
+	 */
+	public remove_employee: Employee ==> ()
+	remove_employee(e) == (employees := employees \ {e}; assigned := {e} <-: assigned;)
+	pre e in set employees and e in set dom assigned
+	post e not in set employees and e not in set dom assigned;
+	
+	/**
+	 *	Assign a malfunction to an employee.
+	 *	Note that the employee must already not be assigned to other malfunction.
+	 *	In case a malfunction is pushed and there's no free employee, it is discarded.
+	 */
+	public push_issue: Malfunction ==> ()
+	push_issue(m) == (
+		dcl logged: bool := false;
+		for all emp in set dom assigned do 
+		if assigned(emp) = nil and not logged then (assigned := assigned ++ {emp |-> m}; logged := true);
+	)
+	pre m not in set rng assigned
+	post true;
+	
+	/**
+	 *	Fixes all malfunctions.
+	 *	Essentially sends every employee to work on its assigned machine. At the end of this operation,
+	 *	no employee should be assigned to any malfunction, meaning either no printer was malfunctioning
+	 *	before or all already assigned malfunctions were fixed.
+	 */
+	public fix_all_issues: () ==> ()
+	fix_all_issues() == (
+		for all emp in set dom assigned do
+		if assigned(emp) <> nil then (assigned(emp).fix(); assigned := assigned ++ {emp |-> nil});
+	)
+	post rng assigned = {nil};
+	
+	/** Getter method for the employees set. */
+	public pure get_employees: () ==> set of Employee
+	get_employees() == return self.employees
+	post RESULT = self.employees;
+	
+	/** Getter method for the assigned map. */
+	public pure get_assigned: () ==> map Employee to [Malfunction]
+	get_assigned() == return self.assigned
+	post RESULT = self.assigned;
+	
+functions
+	/** No functions implemented. */
+	
+traces
+	/** No combinatorial test traces implemented. */
+
+end Service

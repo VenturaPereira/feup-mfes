@@ -1,0 +1,210 @@
+/**
+ *	Represents a printer located in a university.
+ */
+class Printer
+
+values
+	/** The base price of printing a black & white page. */
+	public BW_PAGE_PRICE: rat = 0.10;
+	
+	/** The base price of printing a colored page. */
+	public COLOR_PAGE_PRICE: rat = 0.25;
+	
+	/** The multiplier applied to the above prices by printing in dimension A3. */
+	public DIM_MULT_PRICE: rat = 2;
+	
+	/** A map relating university codes to the shortened version it should go on the ID. */
+	public UNI_CODE: map University to String = {<FEUP>|->"fe", <ICBAS>|->"ic", <FLUP>|->"fl"};
+	
+	/** A utility map which converts digits to char. */
+	public NAT_2_CHAR: map nat to char = {0|->'0', 1|->'1', 2|->'2', 3|->'3', 4|->'4', 5|->'5', 6|->'6', 7|->'7', 8|->'8', 9|->'9'}
+
+types
+	/** Type definition for string. */
+	public String = seq of char;
+	
+	/** Currently, only the following 3 universities were made clients of this company. */
+	public University = <FEUP>|<ICBAS>|<FLUP>;
+	
+	/** Statistics logged on this printer. */
+	public Statistic = <STAT_DOCS_PRINTED>|<STAT_PAGES_PRINTED>;
+	
+values
+	/** No values implemented. */
+
+instance variables
+	/**
+	 *	A map which ensures every printer on each university has an unique ID.
+	 *	Counts how many printers there are in each university.
+	 */
+	private static uni_id: map University to nat := {<FEUP>|->0, <ICBAS>|->0, <FLUP>|->0};
+	
+	/**
+	 *	The printer's ID. It is unique throughout every other printer provided by the service.
+	 *	Follows the syntax <uni_code>{2}<num>{4} (e.g. fe0001).
+	 */
+	private id: String := "Unnamed printer";
+	
+	/** The student authenticated in the machine whose documents may be printed. */
+	private auth_student: [Student] := nil;
+	
+	/** The printer's queue. Documents in this queue may be printed. */
+	private queue: seq of Document := [];
+	
+	/** A map which relates statistic labels to values. */
+	private stats: map Statistic to nat := { |-> };
+
+operations
+	/** The printer constructor. */
+	public Printer: University ==> Printer
+	Printer(i) == (id := self.inc_uni_id(i); return self)
+	post self.assert_id_syntax(id) and RESULT = self;
+	
+	/**
+	 *	Increment university-scoped printer unique ID so that following printers have a incrementally 
+	 *	larger ID. It returns the new ID and increments the number of machines found in a university.
+	 */
+	public inc_uni_id: University ==> String
+	inc_uni_id(u) == 
+		(dcl new_id: String := UNI_CODE(u) ^ "000" ^ [NAT_2_CHAR(uni_id(u))];
+		uni_id := uni_id ++ {u |-> uni_id(u) + 1};
+		return new_id;
+	);
+	
+	/**
+	 *	Authenticate student.
+	 *	An abstraction of logging into the printer.
+	 */
+	public auth: Student ==> ()
+	auth(student) == (auth_student := student; queue := [])
+	post self.auth_student <> nil and self.queue = [];
+	
+	/**
+	 *	Reset operation.
+	 *	Unauthenticates the student and clears the machine's printing queue.
+	 */
+	public reset: () ==> ()
+	reset() == (auth_student := nil; queue := [])
+	post auth_student = nil and queue = [];
+	
+	/**
+	 *	Select student's documents from its personal printing queue.
+	 *	Students may select their documents by providing the index on their personal printing queue.
+	 *	Selected documents (given their ID is valid) are then inserted into the printer's printing queue.
+	 */
+	public sel_student_docs: seq of nat ==> ()
+	sel_student_docs(idx) == for i in idx do
+		if i <= len self.auth_student.get_queue() and (i > 0)
+		then queue := queue ^ [self.auth_student.get_queue()(i)]
+	pre len idx <> 0 and (self.auth_student <> nil)
+	post len self.queue = len queue~ + len idx;
+	
+	/**
+	 *	Print the documents in the printing queue.
+	 *	Composed of multiple steps, printing the queue first checks whether the user has sufficient funds
+	 *	to print it. If so, then the print cost is deducted from the authenticated student's account.
+	 *	Statistics such as number of documents and pages printed are logged. Every document printed is
+	 *	deleted from the student's printing queue and the printer's own queue is left empty.
+	 */
+	public print: () ==> ()
+	print() ==
+		(if self.check_insufficient_funds() then return;
+		auth_student.add_balance(-self.calc_print_cost());
+		record_statistic(<STAT_DOCS_PRINTED>, len queue);
+		for doc in self.queue do
+			(record_statistic(<STAT_PAGES_PRINTED>, doc.get_page_no());
+			auth_student.delete_document(doc);
+			queue := tl queue;
+		);
+	)
+	pre self.auth_student <> nil and (len queue > 0)
+	post true;
+	
+	/**
+	 *	Returns the sum of the printing cost of every document.
+	 *	Naturally it takes into account whether the document is to be printed in black & white or color
+	 *	and also its dimensions. These factors change the subtotal according on the base price defined
+	 *	on the 'values' section above.
+	 *	The result is rounded to two decimal places.
+	 */
+	public pure calc_print_cost: () ==> rat
+	calc_print_cost() ==
+		(dcl op_cost: rat := 0.0;
+		
+		for doc in self.queue do
+			(dcl subtotal: rat := 0.0;
+			if doc.get_color() = <BW> then subtotal := subtotal + BW_PAGE_PRICE * doc.get_page_no()
+			else subtotal := subtotal + COLOR_PAGE_PRICE * doc.get_page_no();
+			if doc.get_dimension() = <A3> then subtotal := subtotal * DIM_MULT_PRICE;
+			op_cost := op_cost + subtotal;
+		);
+		return floor (op_cost * 100) / 100;
+	)
+	post true;
+	
+	/**
+	 *	Check whether the student has sufficient funds to print its desired documents.
+	 *	This method returns true if so and false otherwise.
+	 */
+	public check_insufficient_funds: () ==> bool
+	check_insufficient_funds() == return calc_print_cost() > self.auth_student.get_balance()
+	post true;
+	
+	/**
+	 *	Record a given statistic.
+	 *	Given a statistic tag and a value, said value is incremented on the statistic map.
+	 */
+	public record_statistic: Statistic * nat ==> ()
+	record_statistic(s, v) ==
+		if s not in set dom stats then stats := stats ++ {s |-> v}
+		else stats := stats ++ {s |-> stats(s) + v}
+	post assert_statistics(s, v, stats, stats~);
+	
+	/** Getter method for ID. */
+	public pure get_id: () ==> String
+	get_id() == return (self.id)
+	post RESULT = self.id;
+	
+	/** Getter method for authenticated student. */
+	public pure get_auth_student: () ==> [Student]
+	get_auth_student() == return (self.auth_student)
+	post RESULT = self.auth_student;
+	
+	/** Getter method for queue. */
+	public pure get_queue: () ==> seq of Document
+	get_queue() == return (self.queue)
+	post RESULT = self.queue;
+	
+	/** Getter method for a specific statistic. */
+	public pure get_statistic: Statistic ==> nat
+	get_statistic(s) == return self.stats(s)
+	post RESULT = self.stats(s);
+	
+functions
+	/**
+	 *	Assert the full syntax of the printer's ID.
+	 *	Follows the syntax <uni_code>{2}<num>{4} (e.g. fe0001).
+	 */
+	public assert_id_syntax: String -> bool
+	assert_id_syntax(id) == (
+		(has_substring("fe", id) or has_substring("fl", id) or has_substring("ic", id)) and (len id = 6)
+	);
+	
+	/** Auxiliary method which returns true if string s1 is contained in string s2 and false otherwise. */
+	public has_substring: String * String -> bool
+	has_substring(s1, s2) == elems s1 inter elems s2 = elems s1;
+	
+	/**
+	 *	Assert the logging of statistics.
+	 *	Checks whether the new statistics value is equal to the old one plus the value attributed.
+	 */
+	public assert_statistics: Statistic * nat * map Statistic to nat * map Statistic to nat -> bool
+	assert_statistics(s, v, new_s, old_s) == (
+		if s not in set dom old_s then (new_s(s) = v)
+		else (new_s = old_s ++ {s |-> old_s(s) + v})
+	);
+
+traces
+	/** No combinatorial test traces implemented. */
+
+end Printer

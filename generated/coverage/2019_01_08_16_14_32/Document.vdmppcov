@@ -1,0 +1,72 @@
+/**
+ *	A document created by a student with the end purpose of being printed.
+ */
+class Document
+
+types
+	/** Type definition for string. */
+	public String = seq of char;
+	
+	/** A document is saved with the option of being printed either in black and white or in color. */
+	public Color = <BW>|<COLOR>;
+	
+	/** A document is saved with either A3 or A4 dimensions. */
+	public Dimension = <A3>|<A4>;
+	
+values
+	/** No values implemented. */
+
+instance variables
+	/** The title of the document. */
+	private title: String := "Untitled document";
+	
+	/** The page count of the document. */
+	private page_no: nat := 1;
+	
+	/** The selected color option for printing. */
+	private color: Color := <COLOR>;
+	
+	/** The selected dimension size. */
+	private dimension: Dimension := <A4>;
+	
+	/** A document always has one or more pages. It is impossible to have 0 or negative pages. */
+	inv page_no >= 1;
+
+operations
+	/** The document constructor. */
+	public Document: String * nat1 * Color * Dimension ==> Document
+	Document(t, pn, c, d) == (title := t; page_no := pn; color := c; dimension := d; return self)
+	pre len t <> 0 and pn > 0
+	post self.title = t and self.page_no = pn and self.color = c and self.dimension = d and RESULT = self;
+	
+	/** Getter method for title. */
+	public pure get_title: () ==> String
+	get_title() == return self.title
+	pre true
+	post RESULT = self.title;
+	
+	/** Getter method for number of pages. */
+	public pure get_page_no: () ==> nat
+	get_page_no() == return self.page_no
+	pre true
+	post RESULT = self.page_no;
+	
+	/** Getter method for color. */
+	public pure get_color: () ==> Color
+	get_color() == return self.color
+	pre true
+	post RESULT = self.color;
+	
+	/** Getter method for dimension. */
+	public pure get_dimension: () ==> Dimension
+	get_dimension() == return self.dimension
+	pre true
+	post RESULT = self.dimension;
+	
+functions
+	/** No functions implemented. */
+	
+traces
+	/** No combinatorial test traces implemented. */
+	
+end Document

@@ -1,0 +1,41 @@
+/**
+ *	An abstraction for the clients role in the printing service.
+ */
+class University
+
+types
+	/** Currently, only the following 3 universities were made clients of this company. */
+	public Uni = <FEUP>|<ICBAS>|<FLUP>;
+	
+values
+	/** No values implemented. */
+
+instance variables
+	/** This university's university code. */
+	private name: Uni := <FEUP>;
+	
+	/** A set of students enrolled in this university who may use its printing service. */
+	private students: set of Student := {};
+	
+	/** A set of printers available on this university. */
+	private printers: set of Printer := {};
+	
+operations
+	/** University constructor. */
+	public University: Uni * set of Student * set of Printer ==> University
+	University(n, s, p) == (name := n; students := s; printers := p; return self)
+	pre s <> {} and p <> {}
+	post self.name = n and self.students = s and self.printers = p and RESULT = self;
+	
+	/** Getter method for name. */
+	public pure get_name: () ==> Uni
+	get_name() == return self.name
+	post RESULT = (self.name);
+	
+functions
+	/** No functions implemented. */
+	
+traces
+	/** No combinatorial test traces implemented. */
+
+end University

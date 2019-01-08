@@ -1,0 +1,47 @@
+class PrintingQueue
+
+types
+	/** No types implemented. */
+
+values
+	/** No values implemented. */
+
+instance variables
+	/** A sequence of documents inside this printing queue. */
+	private documents: seq of Document := [];
+
+operations
+	/**
+	 *	Add a document to the bottom of this printing queue.
+	 */
+	public push_document: Document ==> ()
+	push_document(document) == documents := documents ^ [document]
+	pre true
+	post document in set elems documents and len documents = len documents~ + 1;
+	
+	/**
+	 *	Delete a document from this printing queue.
+	 */
+	public delete_document: Document ==> ()
+	delete_document(dead_doc) == (
+		dcl new_queue: seq of Document := [], popped: bool := false;
+		for this_doc in documents do 
+			if dead_doc <> this_doc or popped then new_queue := new_queue ^ [this_doc] else popped := true;
+		documents := new_queue;
+	)
+	pre dead_doc in set elems documents
+	post len documents = len documents~ - 1;
+	
+	/** Getter method for documents. */
+	public pure get_documents: () ==> seq of Document
+	get_documents() == return self.documents
+	pre true
+	post RESULT = self.documents;
+	
+functions
+	/** No functions implemented. */
+	
+traces
+	/** No combinatorial test traces implemented. */
+
+end PrintingQueue

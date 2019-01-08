@@ -1,0 +1,115 @@
+/** 
+ *	A user in the printing service.
+ *	Each user belongs to a university and may utilize its university printing services.
+ */
+class Student
+
+types
+	/** Type definition for string. */
+	public String = seq of char;
+	
+values
+	/** No values implemented. */
+
+instance variables
+	/** 
+	 *	The unique student ID follows the UP syntax, only differing on the two first characters, which are
+	 *	reserved to the university code.
+	 */
+	private id: String := "fe000000000";
+	
+	/** The student balance, used to print documents. */
+	private balance: rat := 0.0;
+	
+	/** A personal printing queue. Students may add their documents to it and then send them to a printer. */
+	private queue: PrintingQueue := new PrintingQueue();
+	
+	/** 
+	 *	A student may never be in debt towards the service.
+	 *	If the student does not have enough funds to perform an operation in full, it won't be permitted until
+	 *	they add funds to their accounts.
+	 */
+	inv balance >= 0.0;
+
+operations
+	/** The student constructor. */
+	public Student: String ==> Student
+	Student(idd) == (id := idd; return self)
+	pre assert_id_syntax(idd)
+	post self.id = idd and RESULT = self;
+
+	/**
+	 *	Add or subtract funds from the student's account.
+	 *	Used whenever a student adds funds to its account or funds are deducted from it after printing.
+	 */
+	public add_balance: rat ==> ()
+	add_balance(value) == balance := balance + value
+	pre value <> 0
+	post balance = balance~ + value;
+		
+	/**
+	 *	Push a document to the printing queue.
+	 *	Adds a provided document to the personal printing queue.
+	 */
+	public push_document: Document ==> ()
+	push_document(document) == queue.push_document(document)
+	pre true
+	post document in set elems queue.get_documents();
+	
+	/**
+	 *	Delete a document from the printing queue.
+	 *	Conversingly to push_document, deletes a provided document from the personal printing queue.
+	 */
+	public delete_document: Document ==> ()
+	delete_document(document) == queue.delete_document(document)
+	pre document in set elems queue.get_documents()
+	post true;
+	
+	/**
+	 *	Report a printer malfunction.
+	 *	Whenever a student witnesses a printer malfunction, it may choose to report it to the service
+	 *	which will dispatch an employee to fix it.
+	 *	It must provide a Malfunction object as a report.
+	 */
+	public report_malfunction: Service * Malfunction ==> ()
+	report_malfunction(s, m) == s.push_issue(m)
+	post true;
+	
+	/** Getter method for name. */
+	public pure get_id: () ==> String
+	get_id() == return self.id
+	pre true
+	post RESULT = self.id;
+	
+	/** Getter method for balance. */
+	public pure get_balance: () ==> rat
+	get_balance() == return self.balance
+	pre true
+	post RESULT = self.balance;
+	
+	/** Getter method for printing queue's documents. */
+	public pure get_queue: () ==> seq of Document
+	get_queue() == return self.queue.get_documents()
+	pre true
+	post RESULT = self.queue.get_documents();
+	
+functions
+	/**
+	 *	Asserts whether provided ID follows the required syntax.
+	 *	The unique student ID follows the UP syntax, only differing on the two first characters, which are
+	 *	reserved to the university code. 
+	 *	Syntax: <uc>{2}<num>{9}
+	 */
+	public assert_id_syntax: String -> bool
+	assert_id_syntax(id) == ((len id = 11) and
+		(has_substring("fe", id) or has_substring("fl", id) or has_substring("ic", id))
+	);
+	
+	/** Auxiliary method which returns true if string s1 is contained in string s2 and false otherwise. */
+	public has_substring: String * String -> bool
+	has_substring(s1, s2) == elems s1 inter elems s2 = elems s1;
+	
+traces
+	/** No combinatorial test traces implemented. */
+
+end Student
