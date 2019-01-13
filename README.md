@@ -20,7 +20,7 @@ It's based on Eclipse.
 VDM stands for **Vienna Development Method** *(fancy)* and is one of the longest-established formal methods for the development of computer-based systems. The ++ variant is simply an extension which supports **modelling of object-oriented** and concurrent **systems**.
 
 ## Why not just do it in Java, dummy?
-It aims to **reduce the time coding and fixing bugs in exchange of a more careful planning phase**.  
+It aims to **reduce the time coding and fixing bugs in exchange for a more careful planning phase**.  
 Naturally, it can be generated to Java whenever ([check the generated folder!](https://github.com/aquelemiguel/feup-mfes/tree/master/generated)).  
 > Experience with the method suggests that the effort expended on formal modeling and analysis can be recovered in reduced rework costs arising from design errors.  
 
